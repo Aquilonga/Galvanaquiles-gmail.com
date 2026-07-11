@@ -3,9 +3,9 @@ import { Button, Text, View } from 'react-native';
 export default function HomeScreen({ navigation }) {
   
   const peliculaInfo = {
-    titulo: "Interstellar",
-    anio: 2014,
-    genero: "Ciencia ficción"
+    titulo: "THE WALKING DEAD",
+    anio: 2010,
+    genero: "Apocalipsis"
   };
 
   return (
