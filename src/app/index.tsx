@@ -1,20 +1,16 @@
 import { createContext, useContext, useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
-// ==========================================
-// 1. CREAR LOS CONTEXTOS (Tema y Autenticación)
-// ==========================================
+
 const TemaContext = createContext();
 const AuthContext = createContext();
 
-// ==========================================
-// 2. PANTALLAS (Login e Inicio)
-// ==========================================
+
 function PantallaLogin() {
   const { login } = useContext(AuthContext);
   const { tema } = useContext(TemaContext);
 
-  // Definimos colores según el tema actual de forma súper básica
+
   const esClaro = tema === 'claro';
 
   return (
@@ -49,19 +45,15 @@ function PantallaInicio() {
   );
 }
 
-// ==========================================
-// 3. CONTROLADOR DE PANTALLAS
-// ==========================================
+
 function AppPrincipal() {
   const { usuario } = useContext(AuthContext);
   return usuario ? <PantallaInicio /> : <PantallaLogin />;
 }
 
-// ==========================================
-// 4. COMPONENTE BASE (Proveedores Globales)
-// ==========================================
+
 export default function App() {
-  // Estados globales que se van a pasar a los Providers
+
   const [tema, setTema] = useState('claro');
   const [usuario, setUsuario] = useState(null);
 
