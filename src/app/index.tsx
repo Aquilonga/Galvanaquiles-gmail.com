@@ -8,7 +8,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { WebBadge } from '@/components/web-badge';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { Link} from 'expo-router';
+import { Link } from 'expo-router';
 function getDevMenuHint() {
   if (Platform.OS === 'web') {
     return <ThemedText type="small">use browser devtools</ThemedText>;
@@ -55,8 +55,8 @@ export default function HomeScreen() {
           />
         </ThemedView>
 
-        <Link href="/tp3" style={{ marginTop: 15 }}>
-          <ThemedText type="link">Ir a Práctica 03</ThemedText>
+        <Link href="/tp4" style={{ marginTop: 15 }}>
+          <ThemedText type="link">Ir a Práctica 04</ThemedText>
         </Link>
 
         {Platform.OS === 'web' && <WebBadge />}
