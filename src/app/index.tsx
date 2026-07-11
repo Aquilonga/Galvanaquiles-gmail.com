@@ -1,124 +1,83 @@
-import { Ionicons } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
-import { useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 
+// ==========================================
+// 1. CREAR LOS CONTEXTOS (Tema y Autenticación)
+// ==========================================
+const TemaContext = createContext();
+const AuthContext = createContext();
 
-function InicioScreen() {
+// ==========================================
+// 2. PANTALLAS (Login e Inicio)
+// ==========================================
+function PantallaLogin() {
+  const { login } = useContext(AuthContext);
+  const { tema } = useContext(TemaContext);
+
+  // Definimos colores según el tema actual de forma súper básica
+  const esClaro = tema === 'claro';
+
   return (
-    <View style={styles.centrado}>
-      <Text style={styles.texto}>Pantalla de Inicio</Text>
+    <View style={[styles.centrado, { backgroundColor: esClaro ? '#fff' : '#333' }]}>
+      <Text style={[styles.titulo, { color: esClaro ? '#000' : '#fff' }]}>
+        Pantalla de Login
+      </Text>
+      <Button title="Iniciar sesión" onPress={() => login('Yesica')} />
     </View>
   );
 }
 
-function PerfilScreen() {
+function PantallaInicio() {
+  const { usuario, logout } = useContext(AuthContext);
+  const { tema, alternarTema } = useContext(TemaContext);
+
+  const esClaro = tema === 'claro';
+
   return (
-    <View style={styles.centrado}>
-      <Text style={styles.texto}>Perfil del Usuario</Text>
+    <View style={[styles.centrado, { backgroundColor: esClaro ? '#fff' : '#333' }]}>
+      <Text style={[styles.texto, { color: esClaro ? '#000' : '#fff' }]}>
+        Bienvenida, {usuario?.nombre} 👋
+      </Text>
+      <Text style={[styles.subtexto, { color: esClaro ? '#555' : '#ccc' }]}>
+        Tema actual: {tema}
+      </Text>
+      
+      <Button title="Cambiar tema" onPress={alternarTema} color="purple" />
+      <View style={{ height: 15 }} />
+      <Button title="Cerrar sesión" onPress={logout} color="red" />
     </View>
   );
 }
 
-function ConfiguracionScreen() {
-  return (
-    <View style={styles.centrado}>
-      <Text style={styles.texto}>Configuración del Sistema</Text>
-    </View>
-  );
+// ==========================================
+// 3. CONTROLADOR DE PANTALLAS
+// ==========================================
+function AppPrincipal() {
+  const { usuario } = useContext(AuthContext);
+  return usuario ? <PantallaInicio /> : <PantallaLogin />;
 }
 
-
-function AcercaDeScreen() {
-  return (
-    <View style={styles.centrado}>
-      <Text style={styles.texto}>Acerca de esta Aplicación (TP7)</Text>
-    </View>
-  );
-}
-
-
-function LoginScreen({ onLogin }) {
-  return (
-    <View style={styles.centrado}>
-      <Text style={styles.titulo}>Por favor, Iniciá Sesión</Text>
-      <Button title="Ingresar a la App" onPress={onLogin} />
-    </View>
-  );
-}
-
-
-const Tab = createBottomTabNavigator();
-const Drawer = createDrawerNavigator();
-
-
-function AppTabs({ setAutenticado }) {
-  return (
-    <Tab.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: '#2196f3' }, 
-        headerTintColor: '#fff',
-        headerTitleAlign: 'center', 
-        tabBarActiveTintColor: '#2196f3',
-      }}
-    >
-      <Tab.Screen 
-        name="Inicio" 
-        component={InicioScreen} 
-        options={{
-          tabBarIcon: ({ color, size }) => <Ionicons name="home" color={color} size={size} />
-        }}
-      />
-      <Tab.Screen 
-        name="Perfil" 
-        component={PerfilScreen} 
-        options={{
-          tabBarIcon: ({ color, size }) => <Ionicons name="person" color={color} size={size} />
-        }}
-      />
-      <Tab.Screen 
-        name="Configuración" 
-        component={ConfiguracionScreen} 
-        options={{
-          tabBarIcon: ({ color, size }) => <Ionicons name="settings" color={color} size={size} />
-        }}
-      />
-    </Tab.Navigator>
-  );
-}
-
-
+// ==========================================
+// 4. COMPONENTE BASE (Proveedores Globales)
+// ==========================================
 export default function App() {
-  const [autenticado, setAutenticado] = useState(false);
+  // Estados globales que se van a pasar a los Providers
+  const [tema, setTema] = useState('claro');
+  const [usuario, setUsuario] = useState(null);
+
+  const alternarTema = () => {
+    setTema(tema === 'claro' ? 'oscuro' : 'claro');
+  };
+
+  const login = (nombre) => setUsuario({ nombre });
+  const logout = () => setUsuario(null);
 
   return (
-    <NavigationContainer independent={true}>
-      {!autenticado ? (
-    
-        <LoginScreen onLogin={() => setAutenticado(true)} />
-      ) : (
-   
-        <Drawer.Navigator initialRouteName="ContenidoPrincipal">
-          <Drawer.Screen 
-            name="ContenidoPrincipal" 
-            options={{ title: 'Menú Principal' }}
-          >
-            {() => <AppTabs setAutenticado={setAutenticado} />}
-          </Drawer.Screen>
-          <Drawer.Screen name="Acerca de" component={AcercaDeScreen} />
-          <Drawer.Screen name="Salir">
-            {() => (
-              <View style={styles.centrado}>
-                <Text style={styles.texto}>¿Querés cerrar sesión?</Text>
-                <Button title="Cerrar Sesión" color="red" onPress={() => setAutenticado(false)} />
-              </View>
-            )}
-          </Drawer.Screen>
-        </Drawer.Navigator>
-      )}
-    </NavigationContainer>
+    <AuthContext.Provider value={{ usuario, login, logout }}>
+      <TemaContext.Provider value={{ tema, alternarTema }}>
+        <AppPrincipal />
+      </TemaContext.Provider>
+    </AuthContext.Provider>
   );
 }
 
@@ -130,11 +89,17 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   titulo: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
   },
   texto: {
-    fontSize: 18,
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  subtexto: {
+    fontSize: 16,
+    marginBottom: 20,
   },
 });
