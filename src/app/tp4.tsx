@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 export default function App() {
-  // 1. Los dos estados básicos que te pide la teoría
+
   const [nombre, setNombre] = useState('');
   const [contraseña, setContraseña] = useState('');
 
@@ -20,12 +20,12 @@ export default function App() {
       <TextInput
         style={styles.input}
         placeholder="Escribe aquí tu contraseña"
-        secureTextEntry={true} // Esto oculta los caracteres
+        secureTextEntry={true}
         value={contraseña}
         onChangeText={setContraseña}
       />
 
-      {/* 2. El mensaje de bienvenida solo aparece si ambos campos tienen texto */}
+     
       {nombre !== '' && contraseña !== '' && (
         <Text style={styles.bienvenida}>Hola, {nombre}</Text>
       )}
@@ -33,7 +33,7 @@ export default function App() {
   );
 }
 
-// Estilos re simples, parecidos a los del ejemplo del PDF
+
 const styles = StyleSheet.create({
   contenedor: {
     padding: 20,
