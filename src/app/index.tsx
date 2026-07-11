@@ -1,105 +1,148 @@
-import { createContext, useContext, useState } from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
+import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
-// ==========================================
-// 1. CREAR LOS CONTEXTOS (Tema y Autenticación)
-// ==========================================
-const TemaContext = createContext();
-const AuthContext = createContext();
-
-// ==========================================
-// 2. PANTALLAS (Login e Inicio)
-// ==========================================
-function PantallaLogin() {
-  const { login } = useContext(AuthContext);
-  const { tema } = useContext(TemaContext);
-
-  // Definimos colores según el tema actual de forma súper básica
-  const esClaro = tema === 'claro';
-
-  return (
-    <View style={[styles.centrado, { backgroundColor: esClaro ? '#fff' : '#333' }]}>
-      <Text style={[styles.titulo, { color: esClaro ? '#000' : '#fff' }]}>
-        Pantalla de Login
-      </Text>
-      <Button title="Iniciar sesión" onPress={() => login('Yesica')} />
-    </View>
-  );
-}
-
-function PantallaInicio() {
-  const { usuario, logout } = useContext(AuthContext);
-  const { tema, alternarTema } = useContext(TemaContext);
-
-  const esClaro = tema === 'claro';
-
-  return (
-    <View style={[styles.centrado, { backgroundColor: esClaro ? '#fff' : '#333' }]}>
-      <Text style={[styles.texto, { color: esClaro ? '#000' : '#fff' }]}>
-        Bienvenida, {usuario?.nombre} 👋
-      </Text>
-      <Text style={[styles.subtexto, { color: esClaro ? '#555' : '#ccc' }]}>
-        Tema actual: {tema}
-      </Text>
-      
-      <Button title="Cambiar tema" onPress={alternarTema} color="purple" />
-      <View style={{ height: 15 }} />
-      <Button title="Cerrar sesión" onPress={logout} color="red" />
-    </View>
-  );
-}
-
-// ==========================================
-// 3. CONTROLADOR DE PANTALLAS
-// ==========================================
-function AppPrincipal() {
-  const { usuario } = useContext(AuthContext);
-  return usuario ? <PantallaInicio /> : <PantallaLogin />;
-}
-
-// ==========================================
-// 4. COMPONENTE BASE (Proveedores Globales)
-// ==========================================
 export default function App() {
-  // Estados globales que se van a pasar a los Providers
-  const [tema, setTema] = useState('claro');
-  const [usuario, setUsuario] = useState(null);
 
-  const alternarTema = () => {
-    setTema(tema === 'claro' ? 'oscuro' : 'claro');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  
+  
+  const [usuarioGuardado, setUsuarioGuardado] = useState('');
+
+  
+  useEffect(() => {
+    const cargarSesion = async () => {
+      const valor = await AsyncStorage.getItem('usuario_email');
+      if (valor) {
+        setUsuarioGuardado(valor);
+      }
+    };
+    cargarSesion();
+  }, []);
+
+ 
+  const handleLogin = async () => {
+  
+    if (!email || !password) {
+      Alert.alert('Error', 'Todos los campos son obligatorios');
+      return;
+    }
+
+    const formatoEmail = /\S+@\S+\.\S+/;
+    if (!formatoEmail.test(email)) {
+      Alert.alert('Error', 'El formato del correo no es válido');
+      return;
+    }
+
+  
+    if (password.length < 4) {
+      Alert.alert('Error', 'La contraseña debe tener al menos 4 caracteres');
+      return;
+    }
+
+   
+    await AsyncStorage.setItem('usuario_email', email);
+    setUsuarioGuardado(email);
+    Alert.alert('Éxito', 'Inicio de sesión correcto');
   };
 
-  const login = (nombre) => setUsuario({ nombre });
-  const logout = () => setUsuario(null);
+  const handleCerrarSesion = async () => {
+    await AsyncStorage.removeItem('usuario_email');
+    setUsuarioGuardado('');
+    setEmail('');
+    setPassword('');
+    Alert.alert('Sesión Cerrada', 'Se borraron los datos del dispositivo');
+  };
 
   return (
-    <AuthContext.Provider value={{ usuario, login, logout }}>
-      <TemaContext.Provider value={{ tema, alternarTema }}>
-        <AppPrincipal />
-      </TemaContext.Provider>
-    </AuthContext.Provider>
+    <View style={styles.contenedor}>
+      {usuarioGuardado ? (
+       
+        <View style={styles.centrado}>
+          <Text style={styles.bienvenida}>¡Bienvenido de nuevo!</Text>
+          <Text style={styles.subtexto}>Sesión activa: {usuarioGuardado}</Text>
+          <Button title="Cerrar sesión" color="red" onPress={handleCerrarSesion} />
+        </View>
+      ) : (
+      
+        <View style={styles.formulario}>
+          <Text style={styles.titulo}>Iniciar Sesión</Text>
+
+          <Text style={styles.label}>Correo Electrónico:</Text>
+          <TextInput
+            placeholder="ejemplo@correo.com"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            style={styles.input}
+          />
+
+          <Text style={styles.label}>Contraseña:</Text>
+          <TextInput
+            placeholder="Mínimo 4 caracteres"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={true}
+            style={styles.input}
+          />
+
+          <View style={{ marginTop: 10 }}>
+            <Button title="Ingresar" onPress={handleLogin} />
+          </View>
+        </View>
+      )}
+    </View>
   );
 }
 
+
 const styles = StyleSheet.create({
-  centrado: {
+  contenedor: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     padding: 20,
+    backgroundColor: '#f5f5f5',
+  },
+  centrado: {
+    alignItems: 'center',
+  },
+  formulario: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   titulo: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 20,
+    textAlign: 'center',
+    marginBottom: 25,
   },
-  texto: {
-    fontSize: 22,
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+    marginTop: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+    fontSize: 16,
+    backgroundColor: '#fff',
+  },
+  bienvenida: {
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
   },
   subtexto: {
     fontSize: 16,
-    marginBottom: 20,
+    color: '#666',
+    marginBottom: 30,
   },
 });
