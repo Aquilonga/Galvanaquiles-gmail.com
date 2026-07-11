@@ -959,6 +959,11 @@
     sf-symbols-typescript "^2.1.0"
     vaul "^1.1.2"
 
+"@expo/vector-icons@^15.0.2":
+  version "15.1.1"
+  resolved "https://registry.yarnpkg.com/@expo/vector-icons/-/vector-icons-15.1.1.tgz#4b1d2c60493c0b0536972f0a5babd5f5c85b48f4"
+  integrity sha512-Iu2VkcoI5vygbtYngm7jb4ifxElNVXQYdDrYkT7UCEIiKLeWnQY0wf2ZhHZ+Wro6Sc5TaumpKUOqDRpLi5rkvw==
+
 "@expo/ws-tunnel@^2.0.0":
   version "2.0.0"
   resolved "https://registry.npmjs.org/@expo/ws-tunnel/-/ws-tunnel-2.0.0.tgz"
@@ -1315,6 +1320,15 @@
     invariant "^2.2.4"
     nullthrows "^1.1.1"
 
+"@react-navigation/bottom-tabs@^7.18.8":
+  version "7.18.8"
+  resolved "https://registry.npmjs.org/@react-navigation/bottom-tabs/-/bottom-tabs-7.18.8.tgz"
+  integrity sha512-7KCsBtwCRwQQSTEw9SLglZCEkxWc+EqgdRKyUOgII+6+xEnemOyg8aDlnLIM2yk9ip6uE+Oxvm0jdpQU2vsu2w==
+  dependencies:
+    "@react-navigation/elements" "^2.9.30"
+    color "^4.2.3"
+    sf-symbols-typescript "^2.1.0"
+
 "@react-navigation/core@^7.21.5":
   version "7.21.5"
   resolved "https://registry.npmjs.org/@react-navigation/core/-/core-7.21.5.tgz"
@@ -1328,6 +1342,16 @@
     react-is "^19.1.0"
     use-latest-callback "^0.2.4"
     use-sync-external-store "^1.5.0"
+
+"@react-navigation/drawer@^7.12.8":
+  version "7.12.8"
+  resolved "https://registry.npmjs.org/@react-navigation/drawer/-/drawer-7.12.8.tgz"
+  integrity sha512-EY4ItjflOGxY2d73L6+LZe4sMQSJGrqbU/pBBR32unR7KP9Crb39m0tpBdtnGHMV18XGh/I6nPVYS3+y/7LaNw==
+  dependencies:
+    "@react-navigation/elements" "^2.9.30"
+    color "^4.2.3"
+    react-native-drawer-layout "^4.2.7"
+    use-latest-callback "^0.2.4"
 
 "@react-navigation/elements@^2.9.30":
   version "2.9.30"
@@ -3375,7 +3399,7 @@ react-is@^19.1.0:
   resolved "https://registry.npmjs.org/react-is/-/react-is-19.2.7.tgz"
   integrity sha512-kZFnouyVv7eP/Phmrlo9FK+zcAdriZJvzxXHF1Sl1P377WSGe2G/JxVolhTrB/jeV47lKImhNUsijjHAAbcl/A==
 
-react-native-drawer-layout@^4.2.2:
+react-native-drawer-layout@^4.2.2, react-native-drawer-layout@^4.2.7:
   version "4.2.7"
   resolved "https://registry.npmjs.org/react-native-drawer-layout/-/react-native-drawer-layout-4.2.7.tgz"
   integrity sha512-hhD+E0QmUPkP2Sj1MsUdrvU7GeOiHChPAFPtKahroTwlBGnpgJsUVSL0GWOy5cG3oCZfnu4Pb+gIzOa4ItGNuA==
